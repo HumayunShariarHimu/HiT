@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Hit</title>
+    <style>
+        /* ----- সাদা-কালো ক্রিপি থিম ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #d0d0d0;
+            min-height: 100vh;
+            padding: 1rem 0.8rem 3rem;
+            animation: creepBg 12s infinite alternate;
+        }
+
+        @keyframes creepBg {
+            0%   { background: #0a0a0a; }
+            50%  { background: #111111; }
+            100% { background: #080808; }
+        }
+
+        .app-container {
+            max-width: 820px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* ---- হেডার ---- */
+        .header {
+            text-align: center;
+            padding: 1.8rem 0 0.8rem;
+            border-bottom: 2px solid #3a3a3a;
+            margin-bottom: 1.8rem;
+            position: relative;
+        }
+        .header h1 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #ececec;
+            text-shadow: 0 0 12px rgba(200, 200, 200, 0.15);
+            animation: flicker 4s infinite;
+        }
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.6; }
+            94% { opacity: 1; }
+            96% { opacity: 0.8; }
+            97% { opacity: 1; }
+        }
+        .header p {
+            color: #999;
+            font-size: 0.95rem;
+            margin-top: 0.2rem;
+            letter-spacing: 2px;
+        }
+        .badge-count {
+            display: inline-block;
+            background: #1a1a1a;
+            padding: 0.2rem 1.6rem;
+            border-radius: 40px;
+            margin: 0.6rem 0 0.2rem;
+            border: 1px solid #444;
+            color: #ccc;
+            font-weight: 600;
+            font-size: 0.9rem;
+            animation: pulseBorder 3s infinite;
+        }
+        @keyframes pulseBorder {
+            0%, 100% { border-color: #444; }
+            50% { border-color: #777; }
+        }
+
+        /* ---- সার্চ ---- */
+        .search-wrap {
+            margin: 1.2rem 0 1.8rem;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .search-wrap input {
+            flex: 1;
+            min-width: 180px;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            border: 1.5px solid #3a3a3a;
+            background: #0f0f0f;
+            color: #ddd;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        .search-wrap input:focus {
+            border-color: #777;
+            background: #151515;
+            box-shadow: 0 0 20px rgba(180, 180, 180, 0.05);
+        }
+        .search-wrap input::placeholder {
+            color: #555;
+            font-weight: 300;
+        }
+        .filter-btn {
+            background: #141414;
+            border: 1.5px solid #444;
+            color: #ccc;
+            padding: 0.8rem 1.4rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .filter-btn.active {
+            background: #2a2a2a;
+            border-color: #888;
+            color: #fff;
+        }
+
+        /* ---- কার্ড ---- */
+        .card-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.4rem;
+            margin-top: 0.5rem;
+        }
+
+        .spot-card {
+            background: #111;
+            border-radius: 24px;
+            padding: 1.2rem 1.2rem 1rem;
+            border-left: 6px solid #444;
+            border: 1px solid #2a2a2a;
+            transition: 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            animation: cardGlow 6s infinite alternate;
+        }
+        @keyframes cardGlow {
+            0%   { box-shadow: 0 0 5px rgba(150, 150, 150, 0.02); }
+            100% { box-shadow: 0 0 25px rgba(180, 180, 180, 0.06); }
+        }
+        .spot-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 40%, rgba(200, 200, 200, 0.02), transparent 70%);
+            pointer-events: none;
+            animation: shiftGlow 12s infinite alternate;
+        }
+        @keyframes shiftGlow {
+            0%   { transform: translate(0, 0); }
+            100% { transform: translate(10%, 10%); }
+        }
+
+        .spot-card:hover {
+            background: #191919;
+            border-left-width: 8px;
+            border-color: #666;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            margin-bottom: 0.4rem;
+            position: relative;
+            z-index: 1;
+        }
+        .spot-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #f0f0f0;
+            letter-spacing: 0.3px;
+        }
+        .spot-number {
+            background: #1e1e1e;
+            padding: 0.1rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #aaa;
+            border: 1px solid #3a3a3a;
+        }
+        .spot-desc {
+            font-size: 0.95rem;
+            color: #c0c0c0;
+            margin: 0.6rem 0 0.2rem;
+            line-height: 1.5;
+            border-left: 2px solid #333;
+            padding-left: 0.8rem;
+            position: relative;
+            z-index: 1;
+        }
+        .detail-block {
+            margin-top: 0.8rem;
+            background: #0a0a0a;
+            border-radius: 14px;
+            padding: 0.8rem 1rem;
+            border: 1px solid #262626;
+            position: relative;
+            z-index: 1;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #d0d0d0;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+        }
+        .detail-text {
+            color: #c0c0c0;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        .detail-text strong {
+            color: #fff;
+            font-weight: 600;
+        }
+        .time-tag {
+            display: inline-block;
+            background: #161616;
+            padding: 0.15rem 1rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            color: #aaa;
+            border: 1px solid #3a3a3a;
+            margin-top: 6px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ---- ফুটার (আইনি + কৌশল) ---- */
+        .footer-note {
+            margin-top: 2.5rem;
+            padding: 1.2rem 1.2rem;
+            border-radius: 24px;
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            text-align: left;
+            color: #b0b0b0;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            animation: footerPulse 8s infinite alternate;
+        }
+        @keyframes footerPulse {
+            0%   { border-color: #2a2a2a; }
+            100% { border-color: #4a4a4a; }
+        }
+        .footer-note strong {
+            color: #eee;
+        }
+        .legal-highlight {
+            color: #aaa;
+            font-weight: 500;
+        }
+        .strategy-tip {
+            color: #ccc;
+            font-weight: 500;
+        }
+
+        /* ---- মোবাইল রেসপন্সিভ ---- */
+        @media (max-width: 480px) {
+            .header h1 { font-size: 2.0rem; }
+            .spot-title { font-size: 1.1rem; }
+            .search-wrap input { min-width: 140px; padding: 0.6rem 1rem; }
+            .filter-btn { padding: 0.6rem 1rem; font-size: 0.85rem; }
+            .detail-text { font-size: 0.9rem; }
+        }
+        @media (max-width: 380px) {
+            .card-header { flex-direction: column; align-items: flex-start; }
+        }
+
+        /* স্ক্রল বার */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 12px; }
+
+        /* ফাঁকা অবস্থা */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #777;
+            background: #0a0a0a;
+            border-radius: 40px;
+            border: 1px dashed #333;
+        }
+        .empty-state strong { color: #aaa; }
+    </style>
+</head>
+<body>
+<div class="app-container" id="app">
+
+    <!-- হেডার -->
+    <header class="header">
+        <h1>HiT</h1>
+        <span class="badge-count" id="totalBadge">১৯টি মারাত্মক পয়েন্ট</span>
+    </header>
+
+    <!-- সার্চ ও ফিল্টার -->
+    <div class="search-wrap">
+        <input type="text" id="searchInput" placeholder="খুঁজুন (স্থান, নাম, সংখ্যা...)" aria-label="সার্চ" />
+        <button class="filter-btn" id="filterBtn">তাৎক্ষণিক</button>
+    </div>
+
+    <!-- কার্ড লিস্ট -->
+    <div id="cardContainer" class="card-grid"></div>
+
+    
+
+<script>
+    (function() {
+        // ====== ১৯টি পয়েন্ট (সম্পূর্ণ ডেটা) ======
+        const spotsData = [
+            {
+                id: 1,
+                title: "কানের ঠিক পেছনে (মাস্টয়েড) ও কানের নিচ",
+                type: "নিউরোজেনিক",
+                time: "১-৩ মিনিট",
+                description: "মাথার করোটির পাতলা হাড় ও বড় ধমনী। আঘাতে সাবডুরাল হেমাটোমা ও ভেস্টিবুলার শক।",
+                attack: "শক্ত মুষ্টি বা তালুর গোড়ায় জোরে ঘুষি।",
+                effect: "মস্তিষ্কে রক্তক্ষরণ; কানের পেছনের ধমনী ফেটে গেলে মিনিটের মধ্যে অজ্ঞান ও মৃত্যু।"
+            },
+            {
+                id: 2,
+                title: "ঘাড়ের দুই পাশ (ক্যারোটিড) ও গলা (ট্রাকিয়া)",
+                type: "নিউরোজেনিক",
+                time: "২-৩ মিনিট",
+                description: "ক্যারোটিড সাইনাস রিফ্লেক্স – মস্তিষ্কে রক্ত চলাচল বন্ধ। শ্বাসনালী ভাঙলে অ্যাসফিক্সিয়া।",
+                attack: "কুনি বা হাতের কোপ দিয়ে ঘাড়ের পাশে আঘাত; গলা চেপে ধরা।",
+                effect: "৫-১০ সেকেন্ডে অজ্ঞান; ২-৩ মিনিটে মস্তিষ্ক মৃতপ্রায়। উভয় লিঙ্গের জন্য অত্যন্ত মারাত্মক।"
+            },
+            {
+                id: 3,
+                title: "চোখের ভেতরের কোনা (মেডিয়াল ক্যানথাস) ও নাকের ব্রিজ",
+                type: "নিউরোজেনিক",
+                time: "সংক্রমণে ঘণ্টা / রক্তক্ষরণে দ্রুত",
+                description: "ল্যাক্রিমাল হাড় ভেঙে মস্তিষ্কের অলফ্যাক্টরি বাল্বে প্রবেশ; মেনিনজাইটিস বা রক্তক্ষরণ।",
+                attack: "আঙুল বা শক্ত বস্তু দিয়ে জোরে খোঁচা।",
+                effect: "মারাত্মক ইনফেকশন বা মস্তিষ্কে রক্তক্ষরণ। নাকের ব্রিজ ভাঙলেও একই ফল।"
+            },
+            {
+                id: 4,
+                title: "ঠোঁটের নিচে (মেন্টাল ফোরামেন) ও চিবুকের হাড়",
+                type: "নিউরোজেনিক",
+                time: "তাৎক্ষণিক",
+                description: "হুইপল্যাশ ইনজুরি – ব্রেনস্টেম সরে যায় বা ছিঁড়ে যায় (অ্যাটলান্টো-অক্সিপিটাল ডিসলোকেশন)।",
+                attack: "উপরের দিকে তালু দিয়ে জোরে ঘুষি (আপারকাট)।",
+                effect: "হৃদস্পন্দন ও শ্বাস নিয়ন্ত্রণকারী ব্রেনস্টেম ক্ষতিগ্রস্ত; তাৎক্ষণিক মৃত্যু।"
+            },
+            {
+                id: 5,
+                title: "বুকের মাঝামাঝি হাড়ের নিচে (সোলার প্লেক্সাস)",
+                type: "নিউরোজেনিক",
+                time: "৩-৫ মিনিট",
+                description: "ডায়াফ্রামের ঠিক উপরে – ফ্রেনিক নার্ভ শকে ডায়াফ্রাম প্যারালাইসিস।",
+                attack: "মুষ্টি, পা বা কুনি দিয়ে জোরে খোঁচা/ঘুষি।",
+                effect: "ফুসফুস কাজ বন্ধ; অক্সিজেন না পেয়ে মৃত্যু। নারী-পুরুষ সমান সংবেদনশীল।"
+            },
+            {
+                id: 6,
+                title: "পাঁজরের নিচে বাম (প্লীহা) ও ডান (লিভার)",
+                type: "হেমোরেজিক",
+                time: "৩০ মিনিট – ১ ঘণ্টা",
+                description: "প্লীহা অত্যন্ত নরম; ফেটে গেলে পেটের ভেতরে প্রচুর রক্তক্ষরণ। লিভার ফাটলেও একই অবস্থা।",
+                attack: "তীর্যকভাবে জোরে লাথি বা ঘুষি।",
+                effect: "প্রথমে ব্যথা কম, পরে রক্তচাপ কমে শকে মৃত্যু। লিভার ফাটলে ধীর গতি।"
+            },
+            {
+                id: 7,
+                title: "মেরুদণ্ডের গোড়া (C1-C2 ভার্টিব্রা)",
+                type: "নিউরোজেনিক",
+                time: "তাৎক্ষণিক-কয়েক মিনিট",
+                description: "সারভাইকাল স্পাইনের সবচেয়ে ভঙ্গুর অংশ; ডায়াফ্রাম চলাচল বন্ধ।",
+                attack: "গলার পেছনে কুনি দিয়ে চাপ বা মাথা পেছনে ঝাঁকানো।",
+                effect: "হাত-পা প্যারালাইসিস, শ্বাস-প্রশ্বাসের পেশি লক; দ্রুত মৃত্যু।"
+            },
+            {
+                id: 8,
+                title: "কানের সামনের অংশ (টেম্পোরাল অঞ্চল)",
+                type: "হেমোরেজিক",
+                time: "১-২ ঘণ্টা (লুসিড ইন্টারভাল)",
+                description: "টেম্পোরাল হাড় পেন্সিলের মতো পাতলা; মিডল মেনিনজিয়াল ধমনী ফেটে এপিডুরাল হিমাটোমা।",
+                attack: "মুষ্টি, কুনি বা মাথা দিয়ে সাইড-ঘুষি।",
+                effect: "আঘাতের ৫-১০ মিনিট ঠিক থাকে, তারপর চাপ বেড়ে কোমা ও মৃত্যু।"
+            },
+            {
+                id: 9,
+                title: "ঘাড়ের পেছনের গোড়া (সারভাইকো-মেডুলারি জাংশন)",
+                type: "নিউরোজেনিক",
+                time: "৩-৫ সেকেন্ডে শ্বাস বন্ধ, ১-২ মিনিটে মৃত্যু",
+                description: "মেডুলা অবলংগাটা – হৃদস্পন্দন ও শ্বাসের মূল নিয়ন্ত্রক। সংকুচিত বা ছিঁড়ে গেলে তাৎক্ষণিক।",
+                attack: "শক্ত বস্তু বা কুনি দিয়ে ঘাড়ের পেছনের উপরের অংশে সোজা নিচে চাপ/ঘুষি।",
+                effect: "মস্তিষ্ক থেকে সিগন্যাল বন্ধ; শ্বাস ও কার্ডিয়াক অ্যারেস্ট – সর্বোচ্চ মারাত্মক।"
+            },
+            {
+                id: 10,
+                title: "বুকের মাঝের হাড়ের উপরিভাগ (হৃদপিণ্ডের ওপরে)",
+                type: "কার্ডিয়াক (কমোশিও কর্ডিস)",
+                time: "২০-৩০ সেকেন্ডে অজ্ঞান, ৪-৫ মিনিটে মৃত্যু",
+                description: "টি-ওয়েভ মুহূর্তে আঘাত পেলে ভেন্ট্রিকুলার ফাইব্রিলেশন – হৃৎপিণ্ড পাম্প বন্ধ।",
+                attack: "খুব শক্ত মুষ্টি বা পা দিয়ে বুকের মাঝে জোরে ধাক্কা।",
+                effect: "মস্তিষ্কে রক্ত না পৌঁছালে দ্রুত মৃত্যু।"
+            },
+            {
+                id: 11,
+                title: "কোমরের দুই পাশের নিচের পাঁজর (ফ্ল্যাঙ্ক/কিডনি অঞ্চল)",
+                type: "হেমোরেজিক",
+                time: "৩০-৬০ মিনিট",
+                description: "কিডনি ফেটে রেট্রোপেরিটোনিয়াল স্পেসে প্রচুর রক্তক্ষরণ যা বাইরে থেকে বোঝা যায় না।",
+                attack: "পেছন বা সাইড থেকে লাথি / শক্ত ঘুষি।",
+                effect: "ব্লাড প্রেসার শূন্যে নেমে যায়; চিকিৎসা ছাড়া মৃত্যু অনিবার্য।"
+            },
+            {
+                id: 12,
+                title: "বগলের নিচে (অ্যাক্সিলারি আর্টারি ও ব্রাকিয়াল প্লেক্সাস)",
+                type: "হেমোরেজিক + নিউরোজেনিক",
+                time: "২-৩ মিনিট (রক্তক্ষরণে)",
+                description: "হাতের প্রধান ধমনী ফেটে প্রায় ১ লিটার রক্ত বের হয়; স্নায়ুতে আঘাতে পেশি অচল।",
+                attack: "পাতলা বস্তু দিয়ে খোঁচা বা কুনি দিয়ে চেপে ধরা।",
+                effect: "হৃৎপিণ্ডে রক্ত ফেরত যাওয়া বন্ধ; শ্বাসকষ্ট ও দ্রুত মৃত্যু।"
+            },
+            {
+                id: 13,
+                title: "পেলভিসের মাঝের নিচের অংশ (পিউবিক সিম্ফিসিস/মূত্রথলির সংযোগ)",
+                type: "হেমোরেজিক",
+                time: "৫ মিনিটের মধ্যে শক",
+                description: "ইলিয়াক ধমনী ও শিরা – দ্বিতীয় বৃহত্তম রক্তনালী। পেলভিস ভাঙলে ধমনী ছিঁড়ে যায়।",
+                attack: "পা বা বুট দিয়ে উপরের দিকে ঝাঁকুনি দিয়ে লাথি।",
+                effect: "পেটের নিচে রক্তক্ষরণ এত দ্রুত যে হাসপাতালে পৌঁছানো পর্যন্ত বাঁচার সম্ভাবনা প্রায় শূন্য।"
+            },
+            {
+                id: 14,
+                title: "কাঁধের হাড়ের নিচে (সাবক্ল্যাভিয়ান ধমনী ও শিরা)",
+                type: "হেমোরেজিক",
+                time: "২-৩ মিনিট",
+                description: "তৃতীয় বৃহত্তম ধমনী; ফেটে গেলে বুকের গহ্বরে দেড় লিটার রক্ত যায়।",
+                attack: "ধারালো বস্তু দিয়ে কাঁধ-বুকের সংযোগস্থলে খোঁচা বা মুষ্টি দিয়ে চাপ।",
+                effect: "হেমোরেজিক শক – চোখে অন্ধকার, ২-৩ মিনিটে হৃদযন্ত্র পাম্প ক্ষমতা হারায়।"
+            },
+            {
+                id: 15,
+                title: "নাভির বাম-উপরের দিকে (অ্যাবডমিনাল অ্যাওর্টা)",
+                type: "হেমোরেজিক",
+                time: "৩-৪ মিনিট",
+                description: "পেটের প্রধান ধমনী (ব্যাস ২-৩ সেমি) – মোট রক্তের ৪০% ২ মিনিটে পেটে ছড়ায়।",
+                attack: "পা, মুষ্টি বা মাথা দিয়ে পেটের মাঝামাঝি বাম-উপরের দিকে জোরে খোঁচা।",
+                effect: "তীব্র ব্যথা, ১ মিনিটে অজ্ঞান, ৩-৪ মিনিটে কার্ডিয়াক অ্যারেস্ট – হাসপাতালেও বাঁচানো অসম্ভব।"
+            },
+            {
+                id: 16,
+                title: "বুকের পাশের পাঁজরের ফাঁক (৫ম-৬ষ্ঠ পাঁজর, মিড-অ্যাক্সিলারি লাইন)",
+                type: "টেনশন নিউমোথোরাক্স",
+                time: "৩-৫ মিনিট",
+                description: "ফুসফুস ছিদ্র হয়ে বায়ু বেরিয়ে বুকের চাপ বাড়ায়; হৃৎপিণ্ড বিপরীত দিকে ঠেলে।",
+                attack: "ধারালো বস্তু দিয়ে ফাঁকে খোঁচা বা সাইড থেকে লাথি যাতে পাঁজর ভেঙে ভেতরে যায়।",
+                effect: "শ্বাস ক্ষীণ, ঘাড়ের শিরা ফুলে ওঠে, রক্তচাপ শূন্যে – দ্রুত মৃত্যু।"
+            },
+            {
+                id: 17,
+                title: "চিবুকের নিচের গহ্বর (হায়য়েড হাড় ও এপিগ্লটিস)",
+                type: "নিউরোজেনিক + অ্যাসফিক্সিয়া",
+                time: "৯০ সেকেন্ডে অজ্ঞান, ৩ মিনিটে মৃত্যু",
+                description: "হায়য়েড হাড় ভেঙে শ্বাসনালী বন্ধ; ভ্যাগাস নার্ভের রিফ্লেক্সে কার্ডিয়াক অ্যারেস্ট।",
+                attack: "আপারকাট ঘুষি বা দড়ি/হাত দিয়ে চেপে ধরা।",
+                effect: "অক্সিজেন বন্ধ – হৃৎপিণ্ড থেমে যায়। অত্যন্ত দ্রুতগতির প্রাণঘাতী।"
+            },
+            {
+                id: 18,
+                title: "পিঠের নিচের কশেরুকা (L1-L2) ও কিডনির পেছন",
+                type: "নিউরোজেনিক (স্পাইনাল শক)",
+                time: "৫ মিনিটের মধ্যে মাল্টি-অর্গান ফেইলিউর",
+                description: "কাউডা ইকুইনা স্নায়ুবিন্যাস ও অ্যাবডমিনাল অ্যাওর্টার শাখা ধ্বংস; প্যারাসিমপ্যাথেটিক অতিরিক্ত উদ্দীপনা।",
+                attack: "পেছন থেকে কোমরের ঠিক উপরে পা বা শক্ত বস্তু দিয়ে সোজা/তির্যক আঘাত।",
+                effect: "হার্টের গতি ২০-৩০ বিটে নেমে, রক্তচাপ অত্যন্ত কমে; মোটা ব্যক্তিদের মধ্যে বেশি বিপজ্জনক।"
+            },
+            {
+                id: 19,
+                title: "হাঁটুর পেছনের ফাঁক (পপলাইটিয়াল ফসা) ও উরুর ভেতরের ধমনী (ফেমোরাল)",
+                type: "হেমোরেজিক",
+                time: "৪-৫ মিনিটে অজ্ঞান, ৭-৮ মিনিটে মৃত্যু",
+                description: "ফেমোরাল ধমনী – দ্বিতীয় বৃহত্তম; প্রতি মিনিটে ৫০০ মিলি রক্তক্ষরণ।",
+                attack: "ধারালো বস্তু দিয়ে হাঁটুর পেছনে বা উরুর ভেতরে খোঁচা; লাথিতে হাড় ভেঙে ধমনী ছিদ্র।",
+                effect: "রক্তচাপ কমে মস্তিষ্কে রক্ত চলাচল বন্ধ; টুর্নিকেট দিলে সময় বাড়ানো সম্ভব।"
+            }
+        ];
+
+        // DOM
+        const container = document.getElementById('cardContainer');
+        const searchInput = document.getElementById('searchInput');
+        const filterBtn = document.getElementById('filterBtn');
+        const totalBadge = document.getElementById('totalBadge');
+
+        let currentFilter = 'all';
+
+        // রেন্ডার
+        function renderCards(filterText = '', filterType = 'all') {
+            const searchTerm = filterText.toLowerCase().trim();
+            let filtered = spotsData;
+
+            if (filterType === 'immediate') {
+                filtered = filtered.filter(item => {
+                    const t = item.time.toLowerCase();
+                    return t.includes('সেকেন্ড') || t.includes('তাৎক্ষণিক') || t.includes('অজ্ঞান') || t.includes('৩-৫ সেকেন্ড');
+                });
+            }
+
+            if (searchTerm !== '') {
+                filtered = filtered.filter(item => {
+                    const combined = (item.title + item.description + item.attack + item.effect + item.type + item.time).toLowerCase();
+                    return combined.includes(searchTerm);
+                });
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <strong>কোনও স্পট খুঁজে পাওয়া যায়নি</strong><br />
+                        <span style="font-size:0.9rem; color:#666;">অন্য কীওয়ার্ড দিয়ে চেষ্টা করুন</span>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach((spot, idx) => {
+                html += `
+                    <div class="spot-card" data-id="${spot.id}">
+                        <div class="card-header">
+                            <span class="spot-title">${idx+1}. ${spot.title}</span>
+                            <span class="spot-number">#${spot.id} · ${spot.type}</span>
+                        </div>
+                        <div class="spot-desc">${spot.description}</div>
+                        <div class="detail-block">
+                            <span class="detail-label">আঘাতের ধরন</span>
+                            <div class="detail-text">${spot.attack}</div>
+                        </div>
+                        <div class="detail-block">
+                            <span class="detail-label">শারীরিক প্রতিক্রিয়া ও ফল</span>
+                            <div class="detail-text">${spot.effect}</div>
+                        </div>
+                        <div style="display:flex; justify-content: flex-end; margin-top: 8px;">
+                            <span class="time-tag">সময়সীমা: ${spot.time}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            totalBadge.innerText = `${filtered.length}টি মারাত্মক পয়েন্ট ${filterType === 'immediate' ? '(তাৎক্ষণিক)' : ''}`;
+        }
+
+        // ইভেন্ট
+        searchInput.addEventListener('input', function(e) {
+            renderCards(e.target.value, currentFilter);
+        });
+
+        filterBtn.addEventListener('click', function() {
+            if (currentFilter === 'all') {
+                currentFilter = 'immediate';
+                filterBtn.classList.add('active');
+                filterBtn.textContent = 'তাৎক্ষণিক ✓';
+            } else {
+                currentFilter = 'all';
+                filterBtn.classList.remove('active');
+                filterBtn.textContent = 'তাৎক্ষণিক';
+            }
+            renderCards(searchInput.value, currentFilter);
+        });
+
+        // প্রথম রেন্ডার
+        renderCards('', 'all');
+    })();
+</script>
+</body>
+</html>
